@@ -94,9 +94,10 @@ export function AdminUsers() {
     if (!selectedUser) return;
 
     try {
+      const updates = { role: newRole };
       const { error } = await supabase
         .from('users')
-        .update({ role: newRole })
+        .update(updates)
         .eq('id', selectedUser.id);
 
       if (error) throw error;
@@ -120,9 +121,10 @@ export function AdminUsers() {
 
   const handleSuspend = async (userId: string) => {
     try {
+      const updates = { is_active: false };
       const { error } = await supabase
         .from('users')
-        .update({ is_active: false })
+        .update(updates)
         .eq('id', userId);
 
       if (error) throw error;
@@ -143,11 +145,13 @@ export function AdminUsers() {
     }
   };
 
-  const handleActivate = async (userId: string) => {
+  // Handle activate - unused
+  const _handleActivate = async (userId: string) => {
     try {
+      const updates = { is_active: true };
       const { error } = await supabase
         .from('users')
-        .update({ is_active: true })
+        .update(updates)
         .eq('id', userId);
 
       if (error) throw error;
