@@ -44,7 +44,7 @@ export const useAuthStore = create<AuthState>()(
 
           if (data.user) {
             const { data: profile } = await supabase
-              .from('profiles')
+              .from('users')
               .select('*')
               .eq('id', data.user.id)
               .single();
@@ -90,13 +90,13 @@ export const useAuthStore = create<AuthState>()(
             };
 
             const { error: profileError } = await supabase
-              .from('profiles')
+              .from('users')
               .insert(profileData as any);
 
             if (profileError) throw profileError;
 
             const { data: profile } = await supabase
-              .from('profiles')
+              .from('users')
               .select('*')
               .eq('id', data.user.id)
               .single();
@@ -150,7 +150,7 @@ export const useAuthStore = create<AuthState>()(
 
           const updateData = { ...data };
           const { error } = await supabase
-            .from('profiles')
+            .from('users')
             .update(updateData as never)
             .eq('id', user.id);
 
