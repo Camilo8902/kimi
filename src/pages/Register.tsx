@@ -90,9 +90,10 @@ export function Register() {
       addToast({
         type: 'success',
         title: 'Cuenta creada',
-        message: 'Tu cuenta ha sido creada exitosamente',
+        message: 'Por favor verifica tu correo electrónico',
       });
-      navigate('/');
+      // Redirect to verification page
+      navigate(`/verification?email=${encodeURIComponent(formData.email)}`);
     }
     
     setIsLoading(false);

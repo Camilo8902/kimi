@@ -50,17 +50,50 @@ export const useAuthStore = create<AuthState>()(
           }
 
           if (data.user) {
-            const { data: profile } = await supabase
+            console.log('%c👤 Fetching user profile...', 'color: blue');
+            
+            const { data: profile, error: profileError } = await supabase
               .from('users')
               .select('*')
               .eq('id', data.user.id)
               .single();
 
-            set({ 
-              user: profile as unknown as User, 
-              session: data.session,
-              isLoading: false 
-            });
+            console.log('%c👤 Profile response:', 'color: blue', { profile, profileError });
+
+            if (profileError) {
+              console.error('%c❌ Profile fetch error:', 'color: red', profileError);
+              // If profile doesn't exist, create a basic one
+              if (profileError.code === 'PGRST116') {
+                console.log('%c⚠️ Profile not found, creating basic profile...', 'color: orange');
+                const { data: newProfile, error: createError } = await supabase
+                  .from('users')
+                  .insert({
+                    id: data.user.id,
+                    email: data.user.email,
+                    first_name: data.user.user_metadata?.first_name || 'User',
+                    last_name: data.user.user_metadata?.last_name || '',
+                    role: 'customer'
+                  })
+                  .select()
+                  .single();
+                
+                if (createError) {
+                  console.error('%c❌ Profile creation error:', 'color: red', createError);
+                  set({ user: null, session: data.session, isLoading: false });
+                } else {
+                  console.log('%c✅ Basic profile created:', 'color: green', newProfile);
+                  set({ user: newProfile as unknown as User, session: data.session, isLoading: false });
+                }
+              } else {
+                set({ user: null, session: data.session, isLoading: false });
+              }
+            } else {
+              set({ 
+                user: profile as unknown as User, 
+                session: data.session,
+                isLoading: false 
+              });
+            }
           }
 
           return { error: null };

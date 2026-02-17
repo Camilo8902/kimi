@@ -25,6 +25,7 @@ import { Shipping } from '@/pages/Shipping';
 import { NotFound } from '@/pages/NotFound';
 import { AdminDashboard } from '@/pages/admin/Dashboard';
 import { SellerDashboard } from '@/pages/seller/Dashboard';
+import { EmailVerification } from '@/pages/EmailVerification';
 import { useAuthStore } from '@/stores/authStore';
 import { Spinner } from '@/components/ui/spinner';
 
@@ -112,6 +113,14 @@ function App() {
           element={
             <PublicRoute>
               <Register />
+            </PublicRoute>
+          } 
+        />
+        <Route 
+          path="/verification" 
+          element={
+            <PublicRoute>
+              <EmailVerification />
             </PublicRoute>
           } 
         />
