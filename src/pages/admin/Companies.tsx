@@ -89,12 +89,10 @@ export function AdminCompanies() {
 
   const handleApprove = async (companyId: string) => {
     try {
-      const updates = { status: 'verified' };
-      const { error } = await supabase
+      const { error } = await (supabase
         .from('companies')
-        .update(updates)
-        .eq('id', companyId)
-        .select();
+        .update({ status: 'verified' } as any)
+        .eq('id', companyId) as any);
 
       if (error) throw error;
 
@@ -118,12 +116,10 @@ export function AdminCompanies() {
 
   const handleReject = async (companyId: string) => {
     try {
-      const updates = { status: 'suspended' };
-      const { error } = await supabase
+      const { error } = await (supabase
         .from('companies')
-        .update(updates)
-        .eq('id', companyId)
-        .select();
+        .update({ status: 'suspended' } as any)
+        .eq('id', companyId) as any);
 
       if (error) throw error;
 
@@ -147,12 +143,10 @@ export function AdminCompanies() {
 
   const handleSuspend = async (companyId: string) => {
     try {
-      const updates = { status: 'suspended' };
-      const { error } = await supabase
+      const { error } = await (supabase
         .from('companies')
-        .update(updates)
-        .eq('id', companyId)
-        .select();
+        .update({ status: 'suspended' } as any)
+        .eq('id', companyId) as any);
 
       if (error) throw error;
 
@@ -178,12 +172,10 @@ export function AdminCompanies() {
     if (!selectedCompany) return;
 
     try {
-      const updates = { commission_rate: newCommission };
-      const { error } = await supabase
+      const { error } = await (supabase
         .from('companies')
-        .update(updates)
-        .eq('id', selectedCompany.id)
-        .select();
+        .update({ commission_rate: newCommission } as any)
+        .eq('id', selectedCompany.id) as any);
 
       if (error) throw error;
 

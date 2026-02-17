@@ -94,12 +94,10 @@ export function AdminUsers() {
     if (!selectedUser) return;
 
     try {
-      const updates = { role: newRole };
-      const { error } = await supabase
+      const { error } = await (supabase
         .from('users')
-        .update(updates)
-        .eq('id', selectedUser.id)
-        .select();
+        .update({ role: newRole } as any)
+        .eq('id', selectedUser.id) as any);
 
       if (error) throw error;
 
@@ -124,12 +122,10 @@ export function AdminUsers() {
 
   const handleSuspend = async (userId: string) => {
     try {
-      const updates = { is_active: false };
-      const { error } = await supabase
+      const { error } = await (supabase
         .from('users')
-        .update(updates)
-        .eq('id', userId)
-        .select();
+        .update({ is_active: false } as any)
+        .eq('id', userId) as any);
 
       if (error) throw error;
 
@@ -154,12 +150,10 @@ export function AdminUsers() {
   // Handle activate - unused
   const handleActivate = async (userId: string) => {
     try {
-      const updates = { is_active: true };
-      const { error } = await supabase
+      const { error } = await (supabase
         .from('users')
-        .update(updates)
-        .eq('id', userId)
-        .select();
+        .update({ is_active: true } as any)
+        .eq('id', userId) as any);
 
       if (error) throw error;
 
