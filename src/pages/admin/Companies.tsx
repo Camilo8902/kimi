@@ -38,7 +38,7 @@ import {
 import { useAuthStore } from '@/stores/authStore';
 import { useUIStore } from '@/stores/uiStore';
 import { supabase } from '@/lib/supabase';
-import type { Company, CompanyStatus } from '@/types';
+import type { Company } from '@/types';
 
 export function AdminCompanies() {
   const { hasRole } = useAuthStore();
@@ -89,10 +89,14 @@ export function AdminCompanies() {
 
   const handleApprove = async (companyId: string) => {
     try {
+      const updates = { status: 'verified' };
       const { error } = await supabase
         .from('companies')
-        .update({ status: 'verified' } as any)
-        .eq('id', companyId);
+        .update(updates)
+        .eq('id', companyId)
+        .select();
+
+      if (error) throw error;
 
       if (error) throw error;
 
@@ -114,10 +118,14 @@ export function AdminCompanies() {
 
   const handleReject = async (companyId: string) => {
     try {
+      const updates = { status: 'suspended' };
       const { error } = await supabase
         .from('companies')
-        .update({ status: 'suspended' } as any)
-        .eq('id', companyId);
+        .update(updates)
+        .eq('id', companyId)
+        .select();
+
+      if (error) throw error;
 
       if (error) throw error;
 
@@ -139,10 +147,14 @@ export function AdminCompanies() {
 
   const handleSuspend = async (companyId: string) => {
     try {
+      const updates = { status: 'suspended' };
       const { error } = await supabase
         .from('companies')
-        .update({ status: 'suspended' } as any)
-        .eq('id', companyId);
+        .update(updates)
+        .eq('id', companyId)
+        .select();
+
+      if (error) throw error;
 
       if (error) throw error;
 
@@ -166,10 +178,14 @@ export function AdminCompanies() {
     if (!selectedCompany) return;
 
     try {
+      const updates = { commission_rate: newCommission };
       const { error } = await supabase
         .from('companies')
-        .update({ commission_rate: newCommission } as any)
-        .eq('id', selectedCompany.id);
+        .update(updates)
+        .eq('id', selectedCompany.id)
+        .select();
+
+      if (error) throw error;
 
       if (error) throw error;
 
