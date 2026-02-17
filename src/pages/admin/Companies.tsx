@@ -40,7 +40,7 @@ import { useUIStore } from '@/stores/uiStore';
 import { supabase } from '@/lib/supabase';
 import type { Company, CompanyStatus } from '@/types';
 
-export function Companies() {
+export function AdminCompanies() {
   const { hasRole } = useAuthStore();
   const { addToast } = useUIStore();
   const [companies, setCompanies] = useState<Company[]>([]);
