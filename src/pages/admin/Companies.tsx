@@ -89,10 +89,9 @@ export function AdminCompanies() {
 
   const handleApprove = async (companyId: string) => {
     try {
-      const updates = { status: 'verified' as CompanyStatus };
       const { error } = await supabase
         .from('companies')
-        .update(updates)
+        .update({ status: 'verified' } as any)
         .eq('id', companyId);
 
       if (error) throw error;
@@ -115,10 +114,9 @@ export function AdminCompanies() {
 
   const handleReject = async (companyId: string) => {
     try {
-      const updates = { status: 'suspended' as CompanyStatus };
       const { error } = await supabase
         .from('companies')
-        .update(updates)
+        .update({ status: 'suspended' } as any)
         .eq('id', companyId);
 
       if (error) throw error;
@@ -141,10 +139,9 @@ export function AdminCompanies() {
 
   const handleSuspend = async (companyId: string) => {
     try {
-      const updates = { status: 'suspended' as CompanyStatus };
       const { error } = await supabase
         .from('companies')
-        .update(updates)
+        .update({ status: 'suspended' } as any)
         .eq('id', companyId);
 
       if (error) throw error;
@@ -169,10 +166,9 @@ export function AdminCompanies() {
     if (!selectedCompany) return;
 
     try {
-      const updates = { commission_rate: newCommission };
       const { error } = await supabase
         .from('companies')
-        .update(updates)
+        .update({ commission_rate: newCommission } as any)
         .eq('id', selectedCompany.id);
 
       if (error) throw error;
