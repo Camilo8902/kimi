@@ -73,7 +73,7 @@ export const useAuthStore = create<AuthState>()(
                     first_name: data.user.user_metadata?.first_name || 'User',
                     last_name: data.user.user_metadata?.last_name || '',
                     role: 'customer'
-                  })
+                  } as any)
                   .select()
                   .single();
                 

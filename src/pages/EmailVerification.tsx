@@ -1,12 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Mail, CheckCircle, AlertCircle, RefreshCw, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useAuthStore } from '@/stores/authStore';
 
 export function EmailVerification() {
   const [searchParams] = useSearchParams();
-  const { resendConfirmation } = useAuthStore();
   const [email] = useState(searchParams.get('email') || '');
   const [isResending, setIsResending] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
