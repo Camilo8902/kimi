@@ -109,6 +109,7 @@ export const useAuthStore = create<AuthState>()(
               .insert(profileData as any);
 
             console.log('%c💾 Insert profile response:', 'color: orange', { profileError });
+            console.log('%c📋 Profile data:', 'color: orange', profileData);
 
             if (profileError) {
               console.error('%c❌ Profile insert error:', 'color: red', profileError);
