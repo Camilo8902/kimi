@@ -245,6 +245,27 @@ export interface Database {
         };
         Returns: void;
       };
+      update_company_commission: {
+        Args: {
+          company_id: string;
+          new_commission_rate: number;
+        };
+        Returns: void;
+      };
+      update_user_role: {
+        Args: {
+          user_id: string;
+          new_role: string;
+        };
+        Returns: void;
+      };
+      update_user_status: {
+        Args: {
+          user_id: string;
+          new_status: string;
+        };
+        Returns: void;
+      };
     };
     Enums: {
       user_role: 'super_admin' | 'company_admin' | 'product_manager' | 'inventory_manager' | 'support_agent' | 'marketing_manager' | 'customer';
