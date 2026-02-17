@@ -34,13 +34,20 @@ export const useAuthStore = create<AuthState>()(
 
       signIn: async (email, password) => {
         set({ isLoading: true, error: null });
+        console.log('%c🔐 Attempting sign in...', 'color: blue');
+        console.log('- Email:', email);
         try {
           const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password,
           });
 
-          if (error) throw error;
+          console.log('%c📡 Sign in response:', 'color: blue', { data, error });
+
+          if (error) {
+            console.error('%c❌ Sign in error:', 'color: red', error);
+            throw error;
+          }
 
           if (data.user) {
             const { data: profile } = await supabase
@@ -65,6 +72,9 @@ export const useAuthStore = create<AuthState>()(
 
       signUp: async (email, password, userData) => {
         set({ isLoading: true, error: null });
+        console.log('%c📝 Attempting sign up...', 'color: green');
+        console.log('- Email:', email);
+        console.log('- UserData:', userData);
         try {
           const { data, error } = await supabase.auth.signUp({
             email,
@@ -78,7 +88,12 @@ export const useAuthStore = create<AuthState>()(
             },
           });
 
-          if (error) throw error;
+          console.log('%c📡 Sign up response:', 'color: green', { data, error });
+
+          if (error) {
+            console.error('%c❌ Sign up error:', 'color: red', error);
+            throw error;
+          }
 
           if (data.user) {
             const profileData = {
