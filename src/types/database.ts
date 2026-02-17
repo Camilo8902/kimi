@@ -238,7 +238,13 @@ export interface Database {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      update_company_status: {
+        Args: {
+          company_id: string;
+          new_status: string;
+        };
+        Returns: void;
+      };
     };
     Enums: {
       user_role: 'super_admin' | 'company_admin' | 'product_manager' | 'inventory_manager' | 'support_agent' | 'marketing_manager' | 'customer';
