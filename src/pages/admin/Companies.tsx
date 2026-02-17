@@ -91,7 +91,7 @@ export function AdminCompanies() {
     try {
       const { error } = await supabase
         .from('companies')
-        .update({ status: 'active' as CompanyStatus })
+        .update({ status: 'verified' as CompanyStatus })
         .eq('id', companyId);
 
       if (error) throw error;
@@ -116,7 +116,7 @@ export function AdminCompanies() {
     try {
       const { error } = await supabase
         .from('companies')
-        .update({ status: 'inactive' as CompanyStatus })
+        .update({ status: 'suspended' as CompanyStatus })
         .eq('id', companyId);
 
       if (error) throw error;
@@ -204,14 +204,14 @@ export function AdminCompanies() {
 
   const stats = {
     total: companies.length,
-    active: companies.filter(c => c.status === 'active').length,
+    active: companies.filter(c => c.status === 'verified').length,
     pending: companies.filter(c => c.status === 'pending').length,
     suspended: companies.filter(c => c.status === 'suspended').length,
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'active':
+      case 'verified':
         return <Badge className="bg-green-500">Activa</Badge>;
       case 'pending':
         return <Badge className="bg-yellow-500">Pendiente</Badge>;
@@ -410,7 +410,7 @@ export function AdminCompanies() {
                               </DropdownMenuItem>
                             </>
                           )}
-                          {company.status === 'active' && (
+                          {company.status === 'verified' && (
                             <DropdownMenuItem onClick={() => handleSuspend(company.id)}>
                               <XCircle className="w-4 h-4 mr-2" />
                               Suspender

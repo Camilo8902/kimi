@@ -44,7 +44,7 @@ import { supabase } from '@/lib/supabase';
 import type { User, UserRole } from '@/types';
 
 export function AdminUsers() {
-  const { hasRole, user: currentUser } = useAuthStore();
+  const { hasRole } = useAuthStore();
   const { addToast } = useUIStore();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
