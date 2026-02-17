@@ -108,7 +108,12 @@ export const useAuthStore = create<AuthState>()(
               .from('users')
               .insert(profileData as any);
 
-            if (profileError) throw profileError;
+            console.log('%c💾 Insert profile response:', 'color: orange', { profileError });
+
+            if (profileError) {
+              console.error('%c❌ Profile insert error:', 'color: red', profileError);
+              throw profileError;
+            }
 
             const { data: profile } = await supabase
               .from('users')
