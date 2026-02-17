@@ -2,19 +2,12 @@ import { useState, useEffect } from 'react';
 import { 
   Store, 
   Search, 
-  Filter, 
   MoreVertical, 
   CheckCircle, 
   XCircle, 
   AlertCircle,
-  TrendingUp,
-  Users,
-  Package,
   DollarSign,
-  Edit,
-  Trash2,
-  Eye,
-  X
+  Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
