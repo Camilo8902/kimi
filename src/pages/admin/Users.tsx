@@ -1,19 +1,16 @@
 import { useState, useEffect } from 'react';
 import { 
-  Users, 
+  Users as UsersIcon, 
   Search, 
   MoreVertical, 
-  CheckCircle, 
-  XCircle,
   AlertCircle,
   Shield,
   Mail,
   Phone,
   Calendar,
-  Edit,
-  Trash2,
   Eye,
-  Crown
+  Crown,
+  XCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -46,7 +43,7 @@ import { useUIStore } from '@/stores/uiStore';
 import { supabase } from '@/lib/supabase';
 import type { User, UserRole } from '@/types';
 
-export function Users() {
+export function AdminUsers() {
   const { hasRole, user: currentUser } = useAuthStore();
   const { addToast } = useUIStore();
   const [users, setUsers] = useState<User[]>([]);
@@ -253,7 +250,7 @@ export function Users() {
                 <p className="text-sm text-gray-600">Total Usuarios</p>
                 <p className="text-2xl font-bold">{stats.total}</p>
               </div>
-              <Users className="w-8 h-8 text-violet-600" />
+              <UsersIcon className="w-8 h-8 text-violet-600" />
             </div>
           </CardContent>
         </Card>
@@ -286,7 +283,7 @@ export function Users() {
                 <p className="text-sm text-gray-600">Vendedores</p>
                 <p className="text-2xl font-bold text-green-600">{stats.sellers}</p>
               </div>
-              <Users className="w-8 h-8 text-green-600" />
+              <UsersIcon className="w-8 h-8 text-green-600" />
             </div>
           </CardContent>
         </Card>

@@ -9,6 +9,7 @@ export interface User {
   address?: string;
   city?: string;
   country?: string;
+  is_active?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -35,9 +36,13 @@ export interface Company {
   city?: string;
   country?: string;
   tax_id?: string;
+  website?: string;
   status: CompanyStatus;
   plan: CompanyPlan;
   commission_rate: number;
+  rating: number;
+  total_sales: number;
+  owner_id?: string;
   verified_at?: string;
   created_at: string;
   updated_at: string;
