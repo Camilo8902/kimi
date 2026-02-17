@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -28,7 +28,7 @@ const sidebarLinks = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/admin/dashboard', active: true },
   { icon: ShoppingBag, label: 'Pedidos', href: '/admin/orders' },
   { icon: Package, label: 'Productos', href: '/admin/products' },
-  { icon: Store, label: 'Empresas', href: '/admin/companies' },
+  { icon: Store, label: 'Empresas', href: '/admin/companies', active: false },
   { icon: Users, label: 'Usuarios', href: '/admin/users' },
   { icon: BarChart3, label: 'Reportes', href: '/admin/reports' },
   { icon: Settings, label: 'Configuración', href: '/admin/settings' },
@@ -81,6 +81,9 @@ const topProducts = products.slice(0, 5);
 
 export function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+
+  const isActive = (href: string) => location.pathname === href;
   const { signOut } = useAuthStore();
   const { addToast } = useUIStore();
 
@@ -113,7 +116,7 @@ export function AdminDashboard() {
               key={link.href}
               to={link.href}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-                link.active
+                isActive(link.href)
                   ? 'bg-violet-50 text-violet-600'
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
               }`}

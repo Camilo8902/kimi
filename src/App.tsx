@@ -26,6 +26,8 @@ import { NotFound } from '@/pages/NotFound';
 import { AdminDashboard } from '@/pages/admin/Dashboard';
 import { SellerDashboard } from '@/pages/seller/Dashboard';
 import { EmailVerification } from '@/pages/EmailVerification';
+import { AdminCompanies } from '@/pages/admin/Companies';
+import { AdminUsers } from '@/pages/admin/Users';
 import { useAuthStore } from '@/stores/authStore';
 import { Spinner } from '@/components/ui/spinner';
 
@@ -168,6 +170,22 @@ function App() {
           element={
             <ProtectedRoute requiredRoles={['super_admin']}>
               <AdminDashboard />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/companies" 
+          element={
+            <ProtectedRoute requiredRoles={['super_admin']}>
+              <AdminCompanies />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/users" 
+          element={
+            <ProtectedRoute requiredRoles={['super_admin']}>
+              <AdminUsers />
             </ProtectedRoute>
           } 
         />
