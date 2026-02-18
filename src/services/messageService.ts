@@ -4,8 +4,6 @@ import type { Database } from '@/types/database';
 type ActivityLogRow = Database['public']['Tables']['activity_logs']['Row'];
 type ActivityLogInsert = Database['public']['Tables']['activity_logs']['Insert'];
 
-type MessageRow = Database['public']['Tables']['activity_logs']['Row'];
-
 export interface Message {
   id: string;
   order_id: string;
@@ -64,7 +62,7 @@ export async function sendMessage(
 
     const { data, error } = await supabase
       .from('activity_logs')
-      .insert(insertData)
+      .insert(insertData as any)
       .select()
       .single();
 
