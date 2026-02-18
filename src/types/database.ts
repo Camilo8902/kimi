@@ -233,6 +233,114 @@ export interface Database {
           updated_at?: string;
         };
       };
+      reviews: {
+        Row: {
+          id: string;
+          user_id: string;
+          product_id: string;
+          order_id?: string;
+          rating: number;
+          title?: string;
+          content?: string;
+          is_verified_purchase: boolean;
+          is_approved: boolean;
+          helpful_count: number;
+          images: string[];
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          product_id: string;
+          order_id?: string;
+          rating: number;
+          title?: string;
+          content?: string;
+          is_verified_purchase?: boolean;
+          is_approved?: boolean;
+          helpful_count?: number;
+          images?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          product_id?: string;
+          order_id?: string;
+          rating?: number;
+          title?: string;
+          content?: string;
+          is_verified_purchase?: boolean;
+          is_approved?: boolean;
+          helpful_count?: number;
+          images?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      order_items: {
+        Row: {
+          id: string;
+          order_id: string;
+          product_id: string;
+          quantity: number;
+          price: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          order_id: string;
+          product_id: string;
+          quantity: number;
+          price: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          order_id?: string;
+          product_id?: string;
+          quantity?: number;
+          price?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      activity_logs: {
+        Row: {
+          id: string;
+          user_id: string;
+          action: string;
+          entity_type: string;
+          entity_id: string;
+          old_data?: Record<string, unknown>;
+          new_data?: Record<string, unknown>;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          action: string;
+          entity_type: string;
+          entity_id: string;
+          old_data?: Record<string, unknown>;
+          new_data?: Record<string, unknown>;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          action?: string;
+          entity_type?: string;
+          entity_id?: string;
+          old_data?: Record<string, unknown>;
+          new_data?: Record<string, unknown>;
+          created_at?: string;
+        };
+      };
     };
     Views: {
       [_ in never]: never;

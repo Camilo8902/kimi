@@ -1,4 +1,9 @@
 import { supabase } from '@/lib/supabase';
+import type { Database } from '@/types/database';
+
+type ReviewRow = Database['public']['Tables']['reviews']['Row'];
+type ProductRow = Database['public']['Tables']['products']['Row'];
+type OrderRow = Database['public']['Tables']['orders']['Row'];
 
 export interface Review {
   id: string;
@@ -65,7 +70,7 @@ export async function getProductReviews(productId: string): Promise<{ success: b
     }
 
     // Transform the data to flatten the user object
-    const reviews = data?.map(review => ({
+    const reviews = data?.map((review: ReviewRow & { users: any }) => ({
       ...review,
       user: review.users as { first_name: string; last_name: string; avatar_url?: string },
     })) as ReviewWithUser[];
@@ -113,11 +118,11 @@ export async function getProductReviewStats(productId: string): Promise<{
     }
 
     const totalReviews = data.length;
-    const sumRatings = data.reduce((sum, r) => sum + r.rating, 0);
+    const sumRatings = data.reduce((sum: number, r: ReviewRow) => sum + r.rating, 0);
     const averageRating = Math.round((sumRatings / totalReviews) * 10) / 10;
 
     const ratingDistribution: { [key: number]: number } = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-    data.forEach(r => {
+    data.forEach((r: ReviewRow) => {
       ratingDistribution[r.rating] = (ratingDistribution[r.rating] || 0) + 1;
     });
 
@@ -149,17 +154,19 @@ export async function createReview(input: ReviewCreateInput): Promise<{ success:
     }
 
     // Check if user has purchased this product (for verified purchase badge)
+    const { data: userOrders } = await supabase
+      .from('orders')
+      .select('id')
+      .eq('user_id', input.user_id)
+      .eq('status', 'delivered') as { data: OrderRow[] | null };
+
+    const orderIds = userOrders?.map((o) => o.id) || [];
+
     const { data: orderItem } = await supabase
       .from('order_items')
       .select('id')
       .eq('product_id', input.product_id)
-      .in('order_id', 
-        supabase
-          .from('orders')
-          .select('id')
-          .eq('user_id', input.user_id)
-          .eq('status', 'delivered')
-      )
+      .in('order_id', orderIds.length > 0 ? orderIds : [''])
       .limit(1);
 
     const isVerifiedPurchase = !!orderItem && orderItem.length > 0;
@@ -317,7 +324,7 @@ async function updateProductRating(productId: string): Promise<void> {
       .eq('is_approved', true);
 
     if (data && data.length > 0) {
-      const avgRating = data.reduce((sum, r) => sum + r.rating, 0) / data.length;
+      const avgRating = data.reduce((sum: number, r: ReviewRow) => sum + r.rating, 0) / data.length;
       const reviewCount = data.length;
 
       await supabase
@@ -355,7 +362,7 @@ export async function getUserReviews(userId: string): Promise<{ success: boolean
       return { success: false, error: error.message };
     }
 
-    const reviews = data?.map(review => ({
+    const reviews = data?.map((review: ReviewRow & { products: ProductRow | null }) => ({
       ...review,
       product_name: review.products?.name || 'Producto eliminado',
     })) as (Review & { product_name: string })[];
