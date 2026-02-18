@@ -71,10 +71,13 @@ export async function sendMessage(
       return { success: false, error: error.message };
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const responseData = data as any;
+
     return {
       success: true,
       message: {
-        id: data.id,
+        id: responseData.id,
         order_id: orderId,
         sender_id: senderId,
         sender_type: senderType,
@@ -83,7 +86,7 @@ export async function sendMessage(
         subject,
         content,
         is_read: false,
-        created_at: data.created_at,
+        created_at: responseData.created_at,
       } as Message,
     };
   } catch (error) {
@@ -184,7 +187,7 @@ export async function getSellerMessageThreads(sellerId: string): Promise<{
 /**
  * Mark message as read
  */
-export async function markMessageAsRead(messageId: string): Promise<{
+export async function markMessageAsRead(_messageId: string): Promise<{
   success: boolean;
   error?: string;
 }> {
