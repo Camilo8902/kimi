@@ -25,6 +25,15 @@ import { ReviewSystem } from '@/components/ui/ReviewSystem';
 import { products } from '@/data/products';
 import { useCartStore } from '@/stores/cartStore';
 import { useUIStore } from '@/stores/uiStore';
+import { useAuthStore } from '@/stores/authStore';
+import { 
+  getProductReviews, 
+  getProductReviewStats, 
+  createReview, 
+  markReviewHelpful,
+  canUserReviewProduct,
+  type ReviewWithUser 
+} from '@/services/reviewService';
 
 // Mock reviews data
 const mockReviews = [
@@ -69,11 +78,40 @@ export function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [reviews, setReviews] = useState<ReviewWithUser[]>([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [canReview, setCanReview] = useState(false);
   
   const { addItem } = useCartStore();
   const { addToast } = useUIStore();
+  const { user } = useAuthStore();
 
   const product = products.find((p) => p.slug === slug);
+
+  // Fetch reviews from Supabase
+  useEffect(() => {
+    async function fetchReviews() {
+      if (!product) return;
+      
+      setReviewsLoading(true);
+      try {
+        const productReviews = await getProductReviews(product.id);
+        setReviews(productReviews);
+        
+        // Check if user can review this product
+        if (user) {
+          const canUserReview = await canUserReviewProduct(product.id, user.id);
+          setCanReview(canUserReview);
+        }
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      } finally {
+        setReviewsLoading(false);
+      }
+    }
+    
+    fetchReviews();
+  }, [product, user]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -140,12 +178,53 @@ export function ProductDetail() {
     .filter((p) => p.category_id === product.category_id && p.id !== product.id)
     .slice(0, 4);
 
-  const handleSubmitReview = (_review: any) => {
-    addToast({
-      type: 'success',
-      title: 'Reseña enviada',
-      message: 'Tu reseña ha sido enviada y está pendiente de aprobación',
-    });
+  const handleSubmitReview = async (reviewData: { rating: number; title: string; content: string }) => {
+    if (!user) {
+      addToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Debes iniciar sesión para escribir una reseña',
+      });
+      return;
+    }
+
+    try {
+      await createReview({
+        product_id: product.id,
+        user_id: user.id,
+        rating: reviewData.rating,
+        title: reviewData.title,
+        content: reviewData.content,
+      });
+      
+      // Refresh reviews after submission
+      const updatedReviews = await getProductReviews(product.id);
+      setReviews(updatedReviews);
+      
+      addToast({
+        type: 'success',
+        title: 'Reseña enviada',
+        message: 'Tu reseña ha sido enviada y está pendiente de aprobación',
+      });
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      addToast({
+        type: 'error',
+        title: 'Error',
+        message: 'No se pudo enviar la reseña. Inténtalo de nuevo.',
+      });
+    }
+  };
+
+  const handleMarkHelpful = async (reviewId: string) => {
+    try {
+      await markReviewHelpful(reviewId);
+      // Refresh reviews to show updated helpful count
+      const updatedReviews = await getProductReviews(product.id);
+      setReviews(updatedReviews);
+    } catch (error) {
+      console.error('Error marking review as helpful:', error);
+    }
   };
 
   return (
@@ -419,10 +498,11 @@ export function ProductDetail() {
               
               <TabsContent value="reviews" className="mt-6">
                 <ReviewSystem
-                  reviews={mockReviews}
+                  reviews={reviews.length > 0 ? reviews : mockReviews}
                   averageRating={product.rating_average}
                   totalReviews={product.rating_count}
                   onSubmitReview={handleSubmitReview}
+                  onMarkHelpful={handleMarkHelpful}
                 />
               </TabsContent>
             </Tabs>

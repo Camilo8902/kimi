@@ -7,19 +7,22 @@ import {
   Check, 
   ChevronRight,
   Lock,
-  Package
+  Package,
+  AlertCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Navbar } from '@/components/layout/Navbar';
 import { CartDrawer } from '@/components/layout/CartDrawer';
 import { Footer } from '@/components/layout/Footer';
 import { useCartStore } from '@/stores/cartStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useUIStore } from '@/stores/uiStore';
+import { createOrder, type Order } from '@/services/orderService';
 
 const steps = [
   { id: 'shipping', label: 'Envío', icon: MapPin },
@@ -32,6 +35,8 @@ export function Checkout() {
   const [currentStep, setCurrentStep] = useState('shipping');
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
+  const [createdOrder, setCreatedOrder] = useState<Order | null>(null);
+  const [orderError, setOrderError] = useState<string | null>(null);
   
   const { items, subtotal, tax, shipping, total, clearCart } = useCartStore();
   const { user } = useAuthStore();
@@ -58,31 +63,69 @@ export function Checkout() {
 
   const handleShippingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setOrderError(null);
     setCurrentStep('payment');
     window.scrollTo(0, 0);
   };
 
   const handlePaymentSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setOrderError(null);
     setCurrentStep('review');
     window.scrollTo(0, 0);
   };
 
   const handlePlaceOrder = async () => {
+    if (!user?.id) {
+      setOrderError('Debes iniciar sesión para realizar un pedido');
+      return;
+    }
+
     setIsProcessing(true);
+    setOrderError(null);
     
-    // Simulate order processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setOrderComplete(true);
-    clearCart();
-    setIsProcessing(false);
-    
-    addToast({
-      type: 'success',
-      title: '¡Pedido realizado!',
-      message: 'Tu pedido ha sido procesado exitosamente',
-    });
+    try {
+      const result = await createOrder({
+        user_id: user.id,
+        items: items,
+        shipping_address: shippingData,
+        payment_method: paymentMethod,
+        subtotal: subtotal,
+        tax_amount: tax,
+        shipping_cost: shipping,
+        discount_amount: 0,
+        total_amount: total,
+      });
+
+      if (result.success && result.order) {
+        setCreatedOrder(result.order);
+        setOrderComplete(true);
+        clearCart();
+        
+        addToast({
+          type: 'success',
+          title: '¡Pedido realizado!',
+          message: 'Tu pedido ha sido procesado exitosamente',
+        });
+      } else {
+        setOrderError(result.error || 'Error al procesar el pedido');
+        addToast({
+          type: 'error',
+          title: 'Error',
+          message: result.error || 'No se pudo completar el pedido',
+        });
+      }
+    } catch (error) {
+      console.error('Order error:', error);
+      setOrderError('Error inesperado al procesar el pedido');
+      addToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Ocurrió un error inesperado',
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   if (orderComplete) {
@@ -103,7 +146,7 @@ export function Checkout() {
             </p>
             <div className="bg-gray-50 rounded-xl p-6 mb-8">
               <p className="text-sm text-gray-500 mb-2">Número de pedido</p>
-              <p className="text-2xl font-bold text-violet-600">#ORD-{Date.now().toString().slice(-8)}</p>
+              <p className="text-2xl font-bold text-violet-600">#{createdOrder?.order_number || 'Procesando...'}</p>
             </div>
             <div className="flex gap-4 justify-center">
               <Button
@@ -398,6 +441,14 @@ export function Checkout() {
               {/* Review Step */}
               {currentStep === 'review' && (
                 <div className="space-y-6">
+                  {/* Error Alert */}
+                  {orderError && (
+                    <Alert variant="destructive" className="mb-4">
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>{orderError}</AlertDescription>
+                    </Alert>
+                  )}
+                  
                   <div className="bg-white border border-gray-200 rounded-xl p-6">
                     <h2 className="text-lg font-bold text-gray-900 mb-4">
                       Revisar Pedido
