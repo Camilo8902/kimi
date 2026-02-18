@@ -32,6 +32,7 @@ import { AdminOrders } from '@/pages/admin/Orders';
 import { AdminProducts } from '@/pages/admin/Products';
 import { AdminReports } from '@/pages/admin/Reports';
 import { AdminSettings } from '@/pages/admin/Settings';
+import { SellerRegister } from '@/pages/SellerRegister';
 import { useAuthStore } from '@/stores/authStore';
 import { Spinner } from '@/components/ui/spinner';
 
@@ -257,16 +258,7 @@ function App() {
         />
         <Route 
           path="/seller/register" 
-          element={
-            <ProtectedRoute>
-              <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                  <h1 className="text-2xl font-bold mb-4">Registro de Vendedor</h1>
-                  <p className="text-gray-600">Formulario de registro de empresa (próximamente)</p>
-                </div>
-              </div>
-            </ProtectedRoute>
-          } 
+          element={<SellerRegister />}
         />
 
         {/* 404 Page */}

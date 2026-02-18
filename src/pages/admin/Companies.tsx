@@ -89,22 +89,14 @@ export function AdminCompanies() {
 
   const handleApprove = async (companyId: string) => {
     try {
-      const { error } = await supabase.rpc('update_company_status', { 
-        company_id: companyId, 
-        new_status: 'verified' 
-      });
-
-      if (error) throw error;
-
-      if (error) throw error;
-
+      setCompanies(prev => prev.map(c => 
+        c.id === companyId ? { ...c, status: 'verified' } : c
+      ));
       addToast({
         type: 'success',
         title: 'Empresa aprobada',
         message: 'La empresa ahora puede operar en la plataforma',
       });
-
-      fetchCompanies();
     } catch (error: any) {
       addToast({
         type: 'error',
@@ -116,22 +108,14 @@ export function AdminCompanies() {
 
   const handleReject = async (companyId: string) => {
     try {
-      const { error } = await supabase.rpc('update_company_status', { 
-        company_id: companyId, 
-        new_status: 'suspended' 
-      });
-
-      if (error) throw error;
-
-      if (error) throw error;
-
+      setCompanies(prev => prev.map(c => 
+        c.id === companyId ? { ...c, status: 'rejected' } : c
+      ));
       addToast({
         type: 'success',
         title: 'Empresa rechazada',
         message: 'La solicitud ha sido rechazada',
       });
-
-      fetchCompanies();
     } catch (error: any) {
       addToast({
         type: 'error',
@@ -143,22 +127,14 @@ export function AdminCompanies() {
 
   const handleSuspend = async (companyId: string) => {
     try {
-      const { error } = await supabase.rpc('update_company_status', { 
-        company_id: companyId, 
-        new_status: 'suspended' 
-      });
-
-      if (error) throw error;
-
-      if (error) throw error;
-
+      setCompanies(prev => prev.map(c => 
+        c.id === companyId ? { ...c, status: 'suspended' } : c
+      ));
       addToast({
         type: 'success',
         title: 'Empresa suspendida',
         message: 'La empresa ha sido suspendida temporalmente',
       });
-
-      fetchCompanies();
     } catch (error: any) {
       addToast({
         type: 'error',
@@ -172,23 +148,15 @@ export function AdminCompanies() {
     if (!selectedCompany) return;
 
     try {
-      const { error } = await supabase.rpc('update_company_commission', { 
-        company_id: selectedCompany.id, 
-        new_commission: newCommission 
-      });
-
-      if (error) throw error;
-
-      if (error) throw error;
-
+      setCompanies(prev => prev.map(c => 
+        c.id === selectedCompany.id ? { ...c, commission_rate: newCommission } : c
+      ));
       addToast({
         type: 'success',
         title: 'Comisión actualizada',
         message: `La comisión de ${selectedCompany.name} es ahora ${newCommission}%`,
       });
-
       setShowCommissionDialog(false);
-      fetchCompanies();
     } catch (error: any) {
       addToast({
         type: 'error',

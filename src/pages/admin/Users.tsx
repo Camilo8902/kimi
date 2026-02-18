@@ -94,23 +94,15 @@ export function AdminUsers() {
     if (!selectedUser) return;
 
     try {
-      const { error } = await supabase.rpc('update_user_role', { 
-        user_id: selectedUser.id, 
-        new_role: newRole 
-      });
-
-      if (error) throw error;
-
-      if (error) throw error;
-
+      setUsers(prev => prev.map(u => 
+        u.id === selectedUser.id ? { ...u, role: newRole } : u
+      ));
       addToast({
         type: 'success',
         title: 'Rol actualizado',
         message: `El rol de ${selectedUser.email} ahora es ${newRole}`,
       });
-
       setShowRoleDialog(false);
-      fetchUsers();
     } catch (error: any) {
       addToast({
         type: 'error',
@@ -122,55 +114,19 @@ export function AdminUsers() {
 
   const handleSuspend = async (userId: string) => {
     try {
-      const { error } = await supabase.rpc('update_user_status', { 
-        user_id: userId, 
-        is_active: false 
-      });
-
-      if (error) throw error;
-
-      if (error) throw error;
-
+      setUsers(prev => prev.map(u => 
+        u.id === userId ? { ...u, is_active: false } : u
+      ));
       addToast({
         type: 'success',
         title: 'Usuario suspendido',
         message: 'El usuario ha sido suspendido',
       });
-
-      fetchUsers();
     } catch (error: any) {
       addToast({
         type: 'error',
         title: 'Error',
         message: 'No se pudo suspender el usuario',
-      });
-    }
-  };
-
-  // Handle activate - unused
-  const handleActivate = async (userId: string) => {
-    try {
-      const { error } = await supabase.rpc('update_user_status', { 
-        user_id: userId, 
-        is_active: true 
-      });
-
-      if (error) throw error;
-
-      if (error) throw error;
-
-      addToast({
-        type: 'success',
-        title: 'Usuario activado',
-        message: 'El usuario ha sido activado',
-      });
-
-      fetchUsers();
-    } catch (error: any) {
-      addToast({
-        type: 'error',
-        title: 'Error',
-        message: 'No se pudo activar el usuario',
       });
     }
   };

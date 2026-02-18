@@ -12,11 +12,9 @@ import {
   Menu,
   X,
   Search,
-  Filter,
   Eye,
   Edit,
   Trash2,
-  MoreVertical,
   Plus,
   CheckCircle,
   XCircle,
@@ -44,14 +42,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAuthStore } from '@/stores/authStore';
 import { useUIStore } from '@/stores/uiStore';
@@ -101,7 +91,7 @@ export function AdminProducts() {
     });
   };
 
-  const handleStatusChange = (productId: string, newStatus: string) => {
+  const handleStatusChange = (_productId: string, newStatus: string) => {
     addToast({
       type: 'success',
       title: 'Estado actualizado',
@@ -398,15 +388,15 @@ export function AdminProducts() {
                         <TableCell>{product.company}</TableCell>
                         <TableCell className="font-semibold">${product.price.toFixed(2)}</TableCell>
                         <TableCell>
-                          <span className={product.stock < 10 ? 'text-red-600 font-medium' : ''}>
-                            {product.stock}
+                          <span className={product.quantity < 10 ? 'text-red-600 font-medium' : ''}>
+                            {product.quantity}
                           </span>
                         </TableCell>
                         <TableCell>{product.sales_count}</TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1">
                             <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                            <span>{product.rating?.toFixed(1) || '0.0'}</span>
+                            <span>{product.rating_average?.toFixed(1) || '0.0'}</span>
                           </div>
                         </TableCell>
                         <TableCell>
