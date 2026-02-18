@@ -98,8 +98,8 @@ export function ProductDetail() {
         
         // Check if user can review this product
         if (user) {
-          const canUserReview = await canUserReviewProduct(user.id, product.id);
-          // canUserReview returns { canReview: boolean, reason?: string, orderId?: string }
+          const _canUserReview = await canUserReviewProduct(user.id, product.id);
+          // _canUserReview returns { canReview: boolean, reason?: string, orderId?: string }
         }
       } catch (error) {
         console.error('Error fetching reviews:', error);

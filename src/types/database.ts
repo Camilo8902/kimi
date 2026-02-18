@@ -178,16 +178,20 @@ export interface Database {
         Row: {
           id: string;
           order_number: string;
-          customer_id: string;
+          user_id: string;
+          company_id?: string;
           status: string;
           payment_status: string;
+          payment_method?: string;
           shipping_status: string;
           currency: string;
           subtotal: number;
+          shipping_cost: number;
           tax_amount: number;
-          shipping_amount: number;
           discount_amount: number;
           total_amount: number;
+          shipping_address?: Record<string, unknown>;
+          billing_address?: Record<string, unknown>;
           notes?: string;
           customer_notes?: string;
           internal_notes?: string;
@@ -197,16 +201,20 @@ export interface Database {
         Insert: {
           id?: string;
           order_number: string;
-          customer_id: string;
+          user_id: string;
+          company_id?: string;
           status?: string;
           payment_status?: string;
+          payment_method?: string;
           shipping_status?: string;
           currency?: string;
           subtotal: number;
+          shipping_cost?: number;
           tax_amount?: number;
-          shipping_amount?: number;
           discount_amount?: number;
           total_amount: number;
+          shipping_address?: Record<string, unknown>;
+          billing_address?: Record<string, unknown>;
           notes?: string;
           customer_notes?: string;
           internal_notes?: string;
@@ -216,16 +224,20 @@ export interface Database {
         Update: {
           id?: string;
           order_number?: string;
-          customer_id?: string;
+          user_id?: string;
+          company_id?: string;
           status?: string;
           payment_status?: string;
+          payment_method?: string;
           shipping_status?: string;
           currency?: string;
           subtotal?: number;
+          shipping_cost?: number;
           tax_amount?: number;
-          shipping_amount?: number;
           discount_amount?: number;
           total_amount?: number;
+          shipping_address?: Record<string, unknown>;
+          billing_address?: Record<string, unknown>;
           notes?: string;
           customer_notes?: string;
           internal_notes?: string;

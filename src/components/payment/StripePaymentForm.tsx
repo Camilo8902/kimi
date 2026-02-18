@@ -4,7 +4,9 @@
  */
 
 import { useState, useEffect } from 'react';
-import { loadStripe, Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
+import type { FormEvent } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import type { Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -39,18 +41,20 @@ export function StripePaymentForm({
   amount,
   currency = 'mxn',
   orderId,
-  clientSecret,
+  clientSecret: _clientSecret,
   onPaymentSuccess,
   onPaymentError,
   onCancel,
 }: StripePaymentFormProps) {
-  const [stripe, setStripe] = useState<Stripe | null>(null);
-  const [elements, setElements] = useState<StripeElements | null>(null);
-  const [cardElement, setCardElement] = useState<StripeCardElement | null>(null);
+  // Stripe state - kept for future Stripe Elements integration
+  const [_stripe] = useState<Stripe | null>(null);
+  const [_elements] = useState<StripeElements | null>(null);
+  const [_cardElement] = useState<StripeCardElement | null>(null);
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [cardComplete, setCardComplete] = useState(false);
+  // Card completion state - kept for future Stripe Elements integration
+  const [_cardComplete] = useState(false);
   
   // Card details state (for mock implementation)
   const [cardNumber, setCardNumber] = useState('');
@@ -63,7 +67,8 @@ export function StripePaymentForm({
     const loadStripeLibrary = async () => {
       try {
         const stripeInstance = await loadStripe(STRIPE_PUBLIC_KEY);
-        setStripe(stripeInstance);
+        // Store stripe instance for future use
+        void stripeInstance;
       } catch (err) {
         console.error('Failed to load Stripe:', err);
         // Continue with mock implementation
@@ -116,7 +121,7 @@ export function StripePaymentForm({
     }
     
     const month = parseInt(expiryParts[0], 10);
-    const year = parseInt(expiryParts[1], 10);
+    // Note: year is intentionally unused in this mock validation
     
     if (month < 1 || month > 12) {
       setError('Mes de expiración inválido');
@@ -132,7 +137,7 @@ export function StripePaymentForm({
   };
   
   // Handle payment submission
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     
