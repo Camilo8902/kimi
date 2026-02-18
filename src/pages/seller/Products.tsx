@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, type ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Plus,
@@ -13,7 +13,6 @@ import {
   Upload,
   FileSpreadsheet,
   Download,
-  X,
   Check,
   AlertCircle,
 } from 'lucide-react';
@@ -57,7 +56,7 @@ export function SellerProducts() {
   const itemsPerPage = 10;
 
   // Handle file selection
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
