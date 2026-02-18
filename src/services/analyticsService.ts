@@ -122,7 +122,7 @@ export async function getTopProducts(
  * Get sales data by period
  */
 export async function getSalesByPeriod(
-  companyId: string,
+  _companyId: string,
   period: 'day' | 'week' | 'month' = 'week'
 ): Promise<{
   success: boolean;
@@ -158,7 +158,7 @@ export async function getSalesByPeriod(
  * Get customer analytics
  */
 export async function getCustomerAnalytics(
-  companyId: string
+  _companyId: string
 ): Promise<{
   success: boolean;
   totalCustomers?: number;
@@ -184,7 +184,7 @@ export async function getCustomerAnalytics(
  * Get revenue by category
  */
 export async function getRevenueByCategory(
-  companyId: string
+  _companyId: string
 ): Promise<{
   success: boolean;
   data?: Array<{ category: string; revenue: number; percentage: number }>;

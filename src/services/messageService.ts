@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase';
 import type { Database } from '@/types/database';
 
 type ActivityLogRow = Database['public']['Tables']['activity_logs']['Row'];
+type ActivityLogInsert = Database['public']['Tables']['activity_logs']['Insert'];
 
 type MessageRow = Database['public']['Tables']['activity_logs']['Row'];
 
@@ -47,21 +48,23 @@ export async function sendMessage(
 }> {
   try {
     // For now, store in activity_logs - in production, use a dedicated messages table
+    const insertData: ActivityLogInsert = {
+      user_id: senderId,
+      action: 'message',
+      entity_type: 'order',
+      entity_id: orderId,
+      new_data: {
+        sender_type: senderType,
+        recipient_type: recipientType,
+        recipient_id: recipientId,
+        subject,
+        content,
+      } as Record<string, unknown>,
+    };
+
     const { data, error } = await supabase
       .from('activity_logs')
-      .insert({
-        user_id: senderId,
-        action: 'message',
-        entity_type: 'order',
-        entity_id: orderId,
-        new_data: {
-          sender_type: senderType,
-          recipient_type: recipientType,
-          recipient_id: recipientId,
-          subject,
-          content,
-        },
-      })
+      .insert(insertData)
       .select()
       .single();
 

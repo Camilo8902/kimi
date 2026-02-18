@@ -3,6 +3,7 @@ import type { Database } from '@/types/database';
 import { useUIStore } from '@/stores/uiStore';
 
 type ActivityLogRow = Database['public']['Tables']['activity_logs']['Row'];
+type ActivityLogInsert = Database['public']['Tables']['activity_logs']['Insert'];
 
 export interface Notification {
   id: string;
@@ -32,19 +33,21 @@ export async function createNotification(payload: NotificationPayload): Promise<
   error?: string;
 }> {
   try {
+    const insertData: ActivityLogInsert = {
+      user_id: payload.userId,
+      action: 'notification',
+      entity_type: payload.type,
+      entity_id: crypto.randomUUID(),
+      new_data: {
+        title: payload.title,
+        message: payload.message,
+        link: payload.link,
+      } as Record<string, unknown>,
+    };
+
     const { data, error } = await supabase
       .from('activity_logs')
-      .insert({
-        user_id: payload.userId,
-        action: 'notification',
-        entity_type: payload.type,
-        entity_id: crypto.randomUUID(),
-        new_data: {
-          title: payload.title,
-          message: payload.message,
-          link: payload.link,
-        },
-      })
+      .insert(insertData)
       .select()
       .single();
 
