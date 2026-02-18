@@ -28,7 +28,6 @@ import { useUIStore } from '@/stores/uiStore';
 import { useAuthStore } from '@/stores/authStore';
 import { 
   getProductReviews, 
-  getProductReviewStats, 
   createReview, 
   markReviewHelpful,
   canUserReviewProduct,
@@ -79,8 +78,6 @@ export function ProductDetail() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [reviews, setReviews] = useState<ReviewWithUser[]>([]);
-  const [reviewsLoading, setReviewsLoading] = useState(true);
-  const [canReview, setCanReview] = useState(false);
   
   const { addItem } = useCartStore();
   const { addToast } = useUIStore();
@@ -93,20 +90,19 @@ export function ProductDetail() {
     async function fetchReviews() {
       if (!product) return;
       
-      setReviewsLoading(true);
       try {
-        const productReviews = await getProductReviews(product.id);
-        setReviews(productReviews);
+        const result = await getProductReviews(product.id);
+        if (result.success && result.reviews) {
+          setReviews(result.reviews);
+        }
         
         // Check if user can review this product
         if (user) {
-          const canUserReview = await canUserReviewProduct(product.id, user.id);
-          setCanReview(canUserReview);
+          const canUserReview = await canUserReviewProduct(user.id, product.id);
+          // canUserReview returns { canReview: boolean, reason?: string, orderId?: string }
         }
       } catch (error) {
         console.error('Error fetching reviews:', error);
-      } finally {
-        setReviewsLoading(false);
       }
     }
     
@@ -198,8 +194,10 @@ export function ProductDetail() {
       });
       
       // Refresh reviews after submission
-      const updatedReviews = await getProductReviews(product.id);
-      setReviews(updatedReviews);
+      const result = await getProductReviews(product.id);
+      if (result.success && result.reviews) {
+        setReviews(result.reviews);
+      }
       
       addToast({
         type: 'success',
@@ -220,8 +218,10 @@ export function ProductDetail() {
     try {
       await markReviewHelpful(reviewId);
       // Refresh reviews to show updated helpful count
-      const updatedReviews = await getProductReviews(product.id);
-      setReviews(updatedReviews);
+      const result = await getProductReviews(product.id);
+      if (result.success && result.reviews) {
+        setReviews(result.reviews);
+      }
     } catch (error) {
       console.error('Error marking review as helpful:', error);
     }
@@ -498,7 +498,19 @@ export function ProductDetail() {
               
               <TabsContent value="reviews" className="mt-6">
                 <ReviewSystem
-                  reviews={reviews.length > 0 ? reviews : mockReviews}
+                  reviews={reviews.length > 0 ? reviews.map(r => ({
+                    id: r.id,
+                    userId: r.user_id,
+                    userName: r.user ? `${r.user.first_name} ${r.user.last_name}` : 'Usuario',
+                    userAvatar: r.user?.avatar_url,
+                    rating: r.rating,
+                    title: r.title || '',
+                    content: r.content || '',
+                    date: r.created_at,
+                    helpful: r.helpful_count,
+                    verified: r.is_verified_purchase,
+                    images: r.images
+                  })) : mockReviews}
                   averageRating={product.rating_average}
                   totalReviews={product.rating_count}
                   onSubmitReview={handleSubmitReview}
