@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Plus,
@@ -10,6 +10,12 @@ import {
   AlertTriangle,
   ChevronLeft,
   ChevronRight,
+  Upload,
+  FileSpreadsheet,
+  Download,
+  X,
+  Check,
+  AlertCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -31,15 +37,76 @@ import {
 } from '@/components/ui/dialog';
 import { useUIStore } from '@/stores/uiStore';
 import { products } from '@/data/products';
+import { parseCSV, generateCSVTemplate, type CSVProductRow } from '@/lib/csvImport';
 
 export function SellerProducts() {
   const { addToast } = useUIStore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  
+  // Import state
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [parsedProducts, setParsedProducts] = useState<CSVProductRow[]>([]);
+  const [importErrors, setImportErrors] = useState<string[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const itemsPerPage = 10;
+
+  // Handle file selection
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setSelectedFile(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target?.result as string;
+      const result = parseCSV(content);
+      setParsedProducts(result.products);
+      setImportErrors(result.errors);
+    };
+    reader.readAsText(file);
+  };
+
+  // Handle import
+  const handleImport = async () => {
+    if (parsedProducts.length === 0) return;
+    
+    setImporting(true);
+    
+    // Simulate import (in real app, call productService.importProducts)
+    setTimeout(() => {
+      addToast({
+        type: 'success',
+        title: 'Importación completada',
+        message: `${parsedProducts.length} productos importados exitosamente`,
+      });
+      setImportDialogOpen(false);
+      setParsedProducts([]);
+      setImportErrors([]);
+      setSelectedFile(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      setImporting(false);
+    }, 1500);
+  };
+
+  // Download template
+  const downloadTemplate = () => {
+    const template = generateCSVTemplate();
+    const blob = new Blob([template], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'plantilla_productos.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   // Filter products (in real app, filter by company_id)
   const filteredProducts = products.filter(product => {
@@ -97,6 +164,10 @@ export function SellerProducts() {
             </Link>
             <h1 className="text-xl font-bold text-gray-900">Mis Productos</h1>
           </div>
+          <Button className="bg-violet-600 hover:bg-violet-700" onClick={() => setImportDialogOpen(true)}>
+            <Upload className="w-4 h-4 mr-2" />
+            Importar
+          </Button>
           <Button className="bg-violet-600 hover:bg-violet-700">
             <Plus className="w-4 h-4 mr-2" />
             Nuevo Producto
@@ -297,6 +368,127 @@ export function SellerProducts() {
             </Button>
             <Button variant="destructive" onClick={confirmDelete}>
               Eliminar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Import Dialog */}
+      <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileSpreadsheet className="w-5 h-5" />
+              Importar Productos desde CSV
+            </DialogTitle>
+            <DialogDescription>
+              Sube un archivo CSV con tus productos. La primera fila debe contener los encabezados.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Download Template */}
+            <div className="flex justify-end">
+              <Button variant="outline" size="sm" onClick={downloadTemplate}>
+                <Download className="w-4 h-4 mr-2" />
+                Descargar Plantilla
+              </Button>
+            </div>
+
+            {/* File Input */}
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".csv"
+                onChange={handleFileSelect}
+                className="hidden"
+                id="csv-upload"
+              />
+              <label htmlFor="csv-upload" className="cursor-pointer">
+                <Upload className="w-10 h-10 mx-auto text-gray-400 mb-2" />
+                <p className="text-sm text-gray-600">
+                  {selectedFile ? selectedFile.name : 'Haz clic para seleccionar un archivo CSV'}
+                </p>
+              </label>
+            </div>
+
+            {/* Preview */}
+            {parsedProducts.length > 0 && (
+              <div className="max-h-60 overflow-auto border rounded-lg">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 sticky top-0">
+                    <tr>
+                      <th className="px-3 py-2 text-left">Nombre</th>
+                      <th className="px-3 py-2 text-left">SKU</th>
+                      <th className="px-3 py-2 text-left">Precio</th>
+                      <th className="px-3 py-2 text-left">Cantidad</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {parsedProducts.slice(0, 10).map((product, idx) => (
+                      <tr key={idx} className="border-t">
+                        <td className="px-3 py-2">{product.name}</td>
+                        <td className="px-3 py-2">{product.sku}</td>
+                        <td className="px-3 py-2">${product.price}</td>
+                        <td className="px-3 py-2">{product.quantity}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {parsedProducts.length > 10 && (
+                  <p className="text-xs text-gray-500 p-2">
+                    Mostrando 10 de {parsedProducts.length} productos
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Errors */}
+            {importErrors.length > 0 && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-sm font-medium text-red-700 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4" />
+                  Errores encontrados:
+                </p>
+                <ul className="text-xs text-red-600 mt-1 space-y-1">
+                  {importErrors.slice(0, 5).map((err, idx) => (
+                    <li key={idx}>{err}</li>
+                  ))}
+                  {importErrors.length > 5 && (
+                    <li>...y {importErrors.length - 5} errores más</li>
+                  )}
+                </ul>
+              </div>
+            )}
+
+            {/* Summary */}
+            {parsedProducts.length > 0 && (
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Check className="w-4 h-4 text-green-600" />
+                {parsedProducts.length} productos listos para importar
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setImportDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button 
+              onClick={handleImport} 
+              disabled={parsedProducts.length === 0 || importing}
+            >
+              {importing ? (
+                <>
+                  Importando...
+                </>
+              ) : (
+                <>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Importar {parsedProducts.length} Productos
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

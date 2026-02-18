@@ -44,6 +44,7 @@ export interface Database {
           plan: string;
           commission_rate: number;
           verified_at?: string;
+          stripe_connect_id?: string;
           created_at: string;
           updated_at: string;
         };
@@ -64,6 +65,7 @@ export interface Database {
           plan?: string;
           commission_rate?: number;
           verified_at?: string;
+          stripe_connect_id?: string;
           created_at?: string;
           updated_at?: string;
         };
@@ -84,6 +86,7 @@ export interface Database {
           plan?: string;
           commission_rate?: number;
           verified_at?: string;
+          stripe_connect_id?: string;
           created_at?: string;
           updated_at?: string;
         };
@@ -351,6 +354,47 @@ export interface Database {
           old_data?: Record<string, unknown>;
           new_data?: Record<string, unknown>;
           created_at?: string;
+        };
+      };
+      payments: {
+        Row: {
+          id: string;
+          order_id: string;
+          user_id: string;
+          amount: number;
+          currency: string;
+          status: string;
+          payment_method: string;
+          stripe_payment_intent_id: string | null;
+          stripe_charge_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          order_id: string;
+          user_id: string;
+          amount: number;
+          currency?: string;
+          status?: string;
+          payment_method?: string;
+          stripe_payment_intent_id?: string | null;
+          stripe_charge_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          order_id?: string;
+          user_id?: string;
+          amount?: number;
+          currency?: string;
+          status?: string;
+          payment_method?: string;
+          stripe_payment_intent_id?: string | null;
+          stripe_charge_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
         };
       };
     };
