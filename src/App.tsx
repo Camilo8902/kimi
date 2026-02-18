@@ -28,6 +28,10 @@ import { SellerDashboard } from '@/pages/seller/Dashboard';
 import { EmailVerification } from '@/pages/EmailVerification';
 import { AdminCompanies } from '@/pages/admin/Companies';
 import { AdminUsers } from '@/pages/admin/Users';
+import { AdminOrders } from '@/pages/admin/Orders';
+import { AdminProducts } from '@/pages/admin/Products';
+import { AdminReports } from '@/pages/admin/Reports';
+import { AdminSettings } from '@/pages/admin/Settings';
 import { useAuthStore } from '@/stores/authStore';
 import { Spinner } from '@/components/ui/spinner';
 
@@ -174,6 +178,22 @@ function App() {
           } 
         />
         <Route 
+          path="/admin/orders" 
+          element={
+            <ProtectedRoute requiredRoles={['super_admin']}>
+              <AdminOrders />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/products" 
+          element={
+            <ProtectedRoute requiredRoles={['super_admin']}>
+              <AdminProducts />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
           path="/admin/companies" 
           element={
             <ProtectedRoute requiredRoles={['super_admin']}>
@@ -186,6 +206,22 @@ function App() {
           element={
             <ProtectedRoute requiredRoles={['super_admin']}>
               <AdminUsers />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/reports" 
+          element={
+            <ProtectedRoute requiredRoles={['super_admin']}>
+              <AdminReports />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/settings" 
+          element={
+            <ProtectedRoute requiredRoles={['super_admin']}>
+              <AdminSettings />
             </ProtectedRoute>
           } 
         />
