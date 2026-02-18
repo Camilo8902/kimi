@@ -48,7 +48,7 @@ export interface Company {
   updated_at: string;
 }
 
-export type CompanyStatus = 'pending' | 'verified' | 'suspended' | 'inactive';
+export type CompanyStatus = 'pending' | 'verified' | 'suspended' | 'inactive' | 'rejected';
 export type CompanyPlan = 'basic' | 'premium' | 'enterprise';
 
 export interface CompanyMember {
