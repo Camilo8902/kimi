@@ -47,7 +47,7 @@ export async function createNotification(payload: NotificationPayload): Promise<
 
     const { data, error } = await supabase
       .from('activity_logs')
-      .insert(insertData)
+      .insert(insertData as any)
       .select()
       .single();
 
