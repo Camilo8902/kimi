@@ -193,19 +193,19 @@ export async function processRefund(
     await supabase
       .from('payments')
       .update({
-        status: amount && amount < payment.amount ? 'partially_refunded' : 'refunded',
+        status: amount && amount < (payment as any).amount ? 'partially_refunded' : 'refunded',
         updated_at: new Date().toISOString(),
-      })
-      .eq('id', payment.id);
+      } as any)
+      .eq('id', (payment as any).id);
     
     // Update order status
     await supabase
       .from('orders')
       .update({
-        payment_status: amount && amount < payment.amount ? 'partially_refunded' : 'refunded',
+        payment_status: amount && amount < (payment as any).amount ? 'partially_refunded' : 'refunded',
         status: 'refunded',
         updated_at: new Date().toISOString(),
-      })
+      } as any)
       .eq('id', orderId);
     
     return { success: true, refundId: `re_${Math.random().toString(36).substring(2, 15)}` };

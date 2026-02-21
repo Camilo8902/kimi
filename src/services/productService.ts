@@ -1,7 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import type { Database } from '@/types/database';
 
-type ProductRow = Database['public']['Tables']['products']['Row'];
 type ProductInsert = Database['public']['Tables']['products']['Insert'];
 
 export interface Product {
@@ -128,7 +127,8 @@ export async function createProduct(input: ProductInput): Promise<{
         .select('id')
         .limit(1)
         .single();
-      categoryId = categories?.id || 'default';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      categoryId = (categories as any)?.id || 'default';
     }
 
     const productData: ProductInsert = {
@@ -147,7 +147,7 @@ export async function createProduct(input: ProductInput): Promise<{
       weight: input.weight,
       status: input.status || 'active',
       featured: false,
-      tags: input.tags || [],
+      tags: Array.isArray(input.tags) ? input.tags : [],
       rating_average: 0,
       rating_count: 0,
       sales_count: 0,
