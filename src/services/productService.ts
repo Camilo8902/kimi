@@ -275,12 +275,13 @@ export async function updateProduct(
   error?: string;
 }> {
   try {
+    // @ts-ignore
     const { data, error } = await supabase
       .from('products')
       .update({
         ...updates,
         updated_at: new Date().toISOString(),
-      } as any)
+      })
       .eq('id', productId)
       .select()
       .single();

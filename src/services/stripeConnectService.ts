@@ -28,13 +28,13 @@ export async function createConnectAccountLink(
     const mockUrl = `https://connect.stripe.com/setup/s/${Math.random().toString(36).substring(7)}`;
 
     // Store the connect account ID in the company record
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // @ts-ignore
     await supabase
       .from('companies')
       .update({
         // In production: stripe_connect_id: accountId
         updated_at: new Date().toISOString(),
-      } as any)
+      })
       .eq('id', companyId);
 
     return { success: true, url: mockUrl };

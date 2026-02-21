@@ -100,12 +100,13 @@ export async function confirmPayment(
     // In production, this would verify the payment with Stripe
     // and update the database accordingly
     
+    // @ts-ignore
     const { data, error } = await supabase
       .from('payments')
       .update({
         status: 'succeeded',
         updated_at: new Date().toISOString(),
-      } as any)
+      })
       .eq('stripe_payment_intent_id', paymentIntentId)
       .select()
       .single();
@@ -116,13 +117,14 @@ export async function confirmPayment(
     }
     
     // Update the order status
+    // @ts-ignore
     await supabase
       .from('orders')
       .update({
         payment_status: 'paid',
         status: 'processing',
         updated_at: new Date().toISOString(),
-      } as any)
+      })
       .eq('id', orderId);
     
     return { success: true, payment: data };
@@ -140,21 +142,23 @@ export async function handleFailedPayment(
   orderId: string
 ): Promise<void> {
   try {
+    // @ts-ignore
     await supabase
       .from('payments')
       .update({
         status: 'failed',
         updated_at: new Date().toISOString(),
-      } as any)
+      })
       .eq('stripe_payment_intent_id', paymentIntentId);
     
+    // @ts-ignore
     await supabase
       .from('orders')
       .update({
         payment_status: 'failed',
         status: 'pending_payment',
         updated_at: new Date().toISOString(),
-      } as any)
+      })
       .eq('id', orderId);
   } catch (error) {
     console.error('Error handling failed payment:', error);
@@ -190,22 +194,24 @@ export async function processRefund(
     // });
     
     // Update payment status
+    // @ts-ignore
     await supabase
       .from('payments')
       .update({
         status: amount && amount < (payment as any).amount ? 'partially_refunded' : 'refunded',
         updated_at: new Date().toISOString(),
-      } as any)
+      })
       .eq('id', (payment as any).id);
     
     // Update order status
+    // @ts-ignore
     await supabase
       .from('orders')
       .update({
         payment_status: amount && amount < (payment as any).amount ? 'partially_refunded' : 'refunded',
         status: 'refunded',
         updated_at: new Date().toISOString(),
-      } as any)
+      })
       .eq('id', orderId);
     
     return { success: true, refundId: `re_${Math.random().toString(36).substring(2, 15)}` };

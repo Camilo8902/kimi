@@ -222,12 +222,12 @@ export async function markReviewHelpful(reviewId: string): Promise<{ success: bo
 
     const { error } = await supabase
       .from('reviews')
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // @ts-ignore
       .update({ 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         helpful_count: (review as any).helpful_count + 1,
         updated_at: new Date().toISOString()
-      } as any)
+      })
       .eq('id', reviewId);
 
     if (error) {
@@ -334,11 +334,12 @@ async function updateProductRating(productId: string): Promise<void> {
 
       await supabase
         .from('products')
+        // @ts-ignore
         .update({
           rating_average: Math.round(avgRating * 10) / 10,
           rating_count: reviewCount,
           updated_at: new Date().toISOString()
-        } as any)
+        })
         .eq('id', productId);
     }
   } catch (error) {
