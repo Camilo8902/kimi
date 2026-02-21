@@ -74,7 +74,7 @@ export async function createPaymentIntent(
           status: 'pending',
           payment_method: 'card',
           stripe_payment_intent_id: mockPaymentIntentId,
-        });
+        } as any);
     }
     
     return {

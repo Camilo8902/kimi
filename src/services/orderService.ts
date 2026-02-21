@@ -182,7 +182,7 @@ export async function createOrder(input: OrderCreateInput): Promise<{ success: b
           const newQuantity = Math.max(0, product.quantity - item.quantity);
           await supabase
             .from('products')
-            .update({ quantity: newQuantity })
+            .update({ quantity: newQuantity } as any)
             .eq('id', item.product_id);
         }
       }
@@ -200,8 +200,8 @@ export async function createOrder(input: OrderCreateInput): Promise<{ success: b
       .select(`
         *,
         order_items (*)
-      `)
-      .eq('id', orderData.id)
+      ` as any)
+      .eq('id', (orderData as any).id)
       .single();
 
     if (fetchError) {
@@ -285,7 +285,7 @@ export async function cancelOrder(orderId: string, userId: string): Promise<{ su
       return { success: false, error: 'Pedido no encontrado' };
     }
 
-    if (!['pending', 'processing'].includes(order.status)) {
+    if (!['pending', 'processing'].includes((order as any).status)) {
       return { success: false, error: 'Este pedido no puede ser cancelado' };
     }
 
@@ -296,7 +296,7 @@ export async function cancelOrder(orderId: string, userId: string): Promise<{ su
         status: 'cancelled',
         payment_status: 'refunded',
         updated_at: new Date().toISOString()
-      })
+      } as any)
       .eq('id', orderId);
 
     if (updateError) {
@@ -305,7 +305,7 @@ export async function cancelOrder(orderId: string, userId: string): Promise<{ su
     }
 
     // Restore product quantities
-    for (const item of order.order_items || []) {
+    for (const item of (order as any).order_items || []) {
       if (item.product_id) {
         const { data: product } = await supabase
           .from('products')
@@ -316,7 +316,7 @@ export async function cancelOrder(orderId: string, userId: string): Promise<{ su
         if (product) {
           await supabase
             .from('products')
-            .update({ quantity: product.quantity + item.quantity })
+            .update({ quantity: (product as any).quantity + item.quantity } as any)
             .eq('id', item.product_id);
         }
       }
@@ -348,10 +348,10 @@ export async function getOrderTracking(orderId: string, userId: string): Promise
     return { 
       success: true, 
       tracking: {
-        trackingNumber: data.tracking_number || undefined,
-        status: data.shipping_status,
-        shippedAt: data.shipped_at || undefined,
-        deliveredAt: data.delivered_at || undefined,
+        trackingNumber: (data as any).tracking_number || undefined,
+        status: (data as any).shipping_status,
+        shippedAt: (data as any).shipped_at || undefined,
+        deliveredAt: (data as any).delivered_at || undefined,
       }
     };
   } catch (error) {
