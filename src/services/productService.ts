@@ -194,7 +194,8 @@ export async function importProducts(
     .select('id')
     .limit(1)
     .single();
-  const defaultCategoryId = categories?.id || 'default';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const defaultCategoryId = (categories as any)?.id || 'default';
 
   for (let i = 0; i < products.length; i++) {
     const input = products[i];
@@ -240,7 +241,7 @@ export async function importProducts(
 
       const { error } = await supabase
         .from('products')
-        .insert(productData);
+        .insert(productData as any);
 
       if (error) {
         failed++;
