@@ -183,11 +183,7 @@ export async function createOrder(input: OrderCreateInput): Promise<{ success: b
         if (product) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const newQuantity = Math.max(0, (product as any).quantity - item.quantity);
-          // @ts-ignore
-          await supabase
-            .from('products')
-            .update({ quantity: newQuantity })
-            .eq('id', item.product_id);
+          await supabase.from('products').update({ quantity: newQuantity }).eq('id', item.product_id);
         }
       }
     }
@@ -294,16 +290,7 @@ export async function cancelOrder(orderId: string, userId: string): Promise<{ su
     }
 
     // Update order status
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    // @ts-ignore
-    const { error: updateError } = await supabase
-      .from('orders')
-      .update({ 
-        status: 'cancelled',
-        payment_status: 'refunded',
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', orderId);
+    const { error: updateError } = await supabase.from('orders').update({ status: 'cancelled', payment_status: 'refunded', updated_at: new Date().toISOString() }).eq('id', orderId);
 
     if (updateError) {
       console.error('Error cancelling order:', updateError);
@@ -321,11 +308,7 @@ export async function cancelOrder(orderId: string, userId: string): Promise<{ su
           .single();
         
         if (product) {
-          // @ts-ignore
-          await supabase
-            .from('products')
-            .update({ quantity: (product as any).quantity + item.quantity })
-            .eq('id', item.product_id);
+          await supabase.from('products').update({ quantity: (product as any).quantity + item.quantity }).eq('id', item.product_id);
         }
       }
     }

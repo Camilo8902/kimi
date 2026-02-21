@@ -275,16 +275,7 @@ export async function updateProduct(
   error?: string;
 }> {
   try {
-    // @ts-ignore
-    const { data, error } = await supabase
-      .from('products')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', productId)
-      .select()
-      .single();
+    const { data, error } = await supabase.from('products').update({ ...updates, updated_at: new Date().toISOString() }).eq('id', productId).select().single();
 
     if (error) {
       console.error('Error updating product:', error);

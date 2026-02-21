@@ -220,15 +220,7 @@ export async function markReviewHelpful(reviewId: string): Promise<{ success: bo
       return { success: false, error: 'Reseña no encontrada' };
     }
 
-    const { error } = await supabase
-      .from('reviews')
-      // @ts-ignore
-      .update({ 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        helpful_count: (review as any).helpful_count + 1,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', reviewId);
+    const { error } = await supabase.from('reviews').update({ helpful_count: (review as any).helpful_count + 1, updated_at: new Date().toISOString() }).eq('id', reviewId);
 
     if (error) {
       console.error('Error marking review as helpful:', error);
@@ -332,15 +324,7 @@ async function updateProductRating(productId: string): Promise<void> {
       const avgRating = data.reduce((sum: number, r: ReviewRow) => sum + r.rating, 0) / data.length;
       const reviewCount = data.length;
 
-      await supabase
-        .from('products')
-        // @ts-ignore
-        .update({
-          rating_average: Math.round(avgRating * 10) / 10,
-          rating_count: reviewCount,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', productId);
+      await supabase.from('products').update({ rating_average: Math.round(avgRating * 10) / 10, rating_count: reviewCount, updated_at: new Date().toISOString() }).eq('id', productId);
     }
   } catch (error) {
     console.error('Error updating product rating:', error);

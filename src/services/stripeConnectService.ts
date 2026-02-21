@@ -28,14 +28,7 @@ export async function createConnectAccountLink(
     const mockUrl = `https://connect.stripe.com/setup/s/${Math.random().toString(36).substring(7)}`;
 
     // Store the connect account ID in the company record
-    // @ts-ignore
-    await supabase
-      .from('companies')
-      .update({
-        // In production: stripe_connect_id: accountId
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', companyId);
+    await supabase.from('companies').update({ updated_at: new Date().toISOString() }).eq('id', companyId);
 
     return { success: true, url: mockUrl };
   } catch (error) {
