@@ -275,7 +275,6 @@ export async function updateProduct(
   error?: string;
 }> {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await supabase
       .from('products')
       .update({

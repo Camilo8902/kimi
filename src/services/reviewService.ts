@@ -222,10 +222,12 @@ export async function markReviewHelpful(reviewId: string): Promise<{ success: bo
 
     const { error } = await supabase
       .from('reviews')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .update({ 
-        helpful_count: review.helpful_count + 1,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        helpful_count: (review as any).helpful_count + 1,
         updated_at: new Date().toISOString()
-      })
+      } as any)
       .eq('id', reviewId);
 
     if (error) {

@@ -28,6 +28,7 @@ export async function createConnectAccountLink(
     const mockUrl = `https://connect.stripe.com/setup/s/${Math.random().toString(36).substring(7)}`;
 
     // Store the connect account ID in the company record
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await supabase
       .from('companies')
       .update({
