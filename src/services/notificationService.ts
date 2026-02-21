@@ -137,7 +137,7 @@ export async function markNotificationAsRead(_notificationId: string): Promise<{
 /**
  * Mark all notifications as read for a user
  */
-export async function markAllNotificationsAsRead(userId: string): Promise<{
+export async function markAllNotificationsAsRead(_userId: string): Promise<{
   success: boolean;
   error?: string;
 }> {

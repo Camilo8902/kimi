@@ -102,6 +102,7 @@ export async function createOrder(input: OrderCreateInput): Promise<{ success: b
     const companyId = input.items[0]?.product?.company_id || null;
 
     // Create the order
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: orderData, error: orderError } = await supabase
       .from('orders')
       .insert({
@@ -131,7 +132,7 @@ export async function createOrder(input: OrderCreateInput): Promise<{ success: b
         total_amount: input.total_amount,
         currency: 'MXN',
         notes: input.notes,
-      })
+      } as any)
       .select()
       .single();
 
@@ -141,8 +142,9 @@ export async function createOrder(input: OrderCreateInput): Promise<{ success: b
     }
 
     // Create order items
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const orderItems = input.items.map(item => ({
-      order_id: orderData.id,
+      order_id: (orderData as any).id,
       product_id: item.product_id,
       variant_id: item.variant_id || null,
       product_name: item.product.name,
@@ -154,9 +156,10 @@ export async function createOrder(input: OrderCreateInput): Promise<{ success: b
       image_url: item.product.images?.[0]?.url || item.variant?.image_url || null,
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error: itemsError } = await supabase
       .from('order_items')
-      .insert(orderItems);
+      .insert(orderItems as any);
 
     if (itemsError) {
       console.error('Error creating order items:', itemsError);
