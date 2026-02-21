@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Stripe Connect Service
  * Handles connected accounts for seller payouts

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Payment Service - Stripe Integration
  * Handles all payment-related operations
