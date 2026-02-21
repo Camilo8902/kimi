@@ -122,7 +122,7 @@ export async function confirmPayment(
         payment_status: 'paid',
         status: 'processing',
         updated_at: new Date().toISOString(),
-      })
+      } as any)
       .eq('id', orderId);
     
     return { success: true, payment: data };
@@ -145,7 +145,7 @@ export async function handleFailedPayment(
       .update({
         status: 'failed',
         updated_at: new Date().toISOString(),
-      })
+      } as any)
       .eq('stripe_payment_intent_id', paymentIntentId);
     
     await supabase
@@ -154,7 +154,7 @@ export async function handleFailedPayment(
         payment_status: 'failed',
         status: 'pending_payment',
         updated_at: new Date().toISOString(),
-      })
+      } as any)
       .eq('id', orderId);
   } catch (error) {
     console.error('Error handling failed payment:', error);
@@ -167,7 +167,7 @@ export async function handleFailedPayment(
 export async function processRefund(
   orderId: string,
   amount?: number,
-  reason?: string
+  _reason?: string
 ): Promise<{ success: boolean; refundId?: string }> {
   try {
     // Get the payment for this order
