@@ -56,17 +56,20 @@ export async function createNotification(payload: NotificationPayload): Promise<
       return { success: false, error: error.message };
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const responseData = data as any;
+
     return {
       success: true,
       notification: {
-        id: data.id,
+        id: responseData.id,
         user_id: payload.userId,
         type: payload.type,
         title: payload.title,
         message: payload.message,
         link: payload.link,
         is_read: false,
-        created_at: data.created_at,
+        created_at: responseData.created_at,
       } as Notification,
     };
   } catch (error) {
@@ -118,7 +121,7 @@ export async function getUserNotifications(userId: string): Promise<{
 /**
  * Mark notification as read
  */
-export async function markNotificationAsRead(notificationId: string): Promise<{
+export async function markNotificationAsRead(_notificationId: string): Promise<{
   success: boolean;
   error?: string;
 }> {
