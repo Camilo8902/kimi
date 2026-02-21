@@ -100,12 +100,13 @@ export async function confirmPayment(
     // In production, this would verify the payment with Stripe
     // and update the database accordingly
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await supabase
       .from('payments')
       .update({
         status: 'succeeded',
         updated_at: new Date().toISOString(),
-      })
+      } as any)
       .eq('stripe_payment_intent_id', paymentIntentId)
       .select()
       .single();
@@ -116,6 +117,7 @@ export async function confirmPayment(
     }
     
     // Update the order status
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await supabase
       .from('orders')
       .update({
@@ -140,6 +142,7 @@ export async function handleFailedPayment(
   orderId: string
 ): Promise<void> {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await supabase
       .from('payments')
       .update({
@@ -148,6 +151,7 @@ export async function handleFailedPayment(
       } as any)
       .eq('stripe_payment_intent_id', paymentIntentId);
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await supabase
       .from('orders')
       .update({
@@ -190,6 +194,7 @@ export async function processRefund(
     // });
     
     // Update payment status
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await supabase
       .from('payments')
       .update({
@@ -199,6 +204,7 @@ export async function processRefund(
       .eq('id', (payment as any).id);
     
     // Update order status
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await supabase
       .from('orders')
       .update({

@@ -173,6 +173,7 @@ export async function createReview(input: ReviewCreateInput): Promise<{ success:
 
     const { data, error } = await supabase
       .from('reviews')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .insert({
         user_id: input.user_id,
         product_id: input.product_id,
@@ -184,7 +185,7 @@ export async function createReview(input: ReviewCreateInput): Promise<{ success:
         is_verified_purchase: isVerifiedPurchase,
         is_approved: true, // Auto-approve for now, can be changed to require moderation
         helpful_count: 0,
-      })
+      } as any)
       .select()
       .single();
 
